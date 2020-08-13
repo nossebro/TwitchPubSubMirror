@@ -1,0 +1,51 @@
+{
+	"output_file": "Settings.json",
+	"TwitchBits": {
+		"type": "checkbox",
+		"value": false,
+		"label": "Subscribe to and send Twitch Bits events",
+		"tooltip": "",
+		"group": "Mirror Events"
+	},
+	"TwitchSub": {
+		"type": "checkbox",
+		"value": false,
+		"label": "Subscribe to and send Twitch Subscription events",
+		"tooltip": "",
+		"group": "Mirror Events"
+	},
+	"TwitchChannelPoints": {
+		"type": "checkbox",
+		"value": true,
+		"label": "Subscribe to and send Twitch Channel Point Rewards events",
+		"tooltip": "",
+		"group": "Mirror Events"
+	},
+	"StreamerName": {
+		"type": "textbox",
+		"value": "",
+		"label": "Streamer Name",
+		"tooltip": "Twitch user name",
+		"group": "Twitch API"
+	},
+	"JTVClientID": {
+		"type": "textbox",
+		"value": "",
+		"label": "Twitch Client ID",
+		"tooltip": "The Twitch Client ID found at https://dev.twitch.tv/console/apps",
+		"group": "Twitch API"
+	},
+	"JTVToken": {
+		"type": "textbox",
+		"value": "",
+		"label": "Twitch Oauth Token",
+		"tooltip": "The Twitch Oauth Token that can be generated at https://twitchapps.com/tokengen. For correct scopes, see https://dev.twitch.tv/docs/authentication#scopes",
+		"group": "Twitch API"
+	},
+	"DebugMode": {
+		"type": "checkbox",
+		"value": false,
+		"label": "Debug Mode",
+		"tooltip": "Enables Debug Mode"
+	}
+}

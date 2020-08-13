@@ -1,0 +1,3 @@
+[submodule "CommonEventsTemplates"]
+	path = CommonEventsTemplates
+	url = git@github.com:nossebro/CommonEventsTemplates.git

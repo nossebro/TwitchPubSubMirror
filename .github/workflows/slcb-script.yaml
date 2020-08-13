@@ -1,0 +1,48 @@
+name: Package Streamlabs Chatbot Script
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'     
+        required: true
+        default: 'v0.0.0'
+      pre-release:
+        description: 'Pre-release'
+        required: true
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Get repository name
+      run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+      shell: bash
+    - name: Create release archive
+      run: |
+        7z a -bd -tzip -xr\!\*.git\* "../${{ env.REPOSITORY_NAME }}-${{ github.event.inputs.version }}.zip" "../${{ env.REPOSITORY_NAME }}"
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: Release ${{ github.event.inputs.version }}
+        draft: false
+        prerelease: ${{ github.event.inputs.pre-release }}
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ../${{ env.REPOSITORY_NAME }}-${{ github.event.inputs.version }}.zip
+        asset_name: ${{ env.REPOSITORY_NAME }}-${{ github.event.inputs.version }}.zip
+        asset_content_type: application/zip
