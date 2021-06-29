@@ -16,7 +16,7 @@ import uuid
 clr.AddReference("websocket-sharp.dll")
 from WebSocketSharp import WebSocket
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from EventTemplates import TwitchBits, TwitchSubscriptions, TwitchChannelPoints
+from CommonEventTemplates import TwitchBits, TwitchSubscriptions, TwitchChannelPoints
 
 #---------------------------------------
 #   [Required] Script Information
