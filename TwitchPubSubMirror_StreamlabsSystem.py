@@ -24,7 +24,7 @@ from CommonEventTemplates import TwitchBits, TwitchSubscriptions, TwitchChannelP
 ScriptName = 'TwitchPubSubMirror'
 Website = 'https://github.com/nossebro/TwitchPubSubMirror'
 Creator = 'nossebro'
-Version = '0.1.0'
+Version = '0.1.1'
 Description = 'Mirrors events from Twitch PubSub socket, and sends them to a local SLCB-compatible websocket'
 
 #---------------------------------------
@@ -252,8 +252,9 @@ def ScriptToggled(state):
 		if not Logger:
 			Init()
 		global ScriptSettings
-		LocalSocket.Connect()
-		Parent.AddCooldown(ScriptName, "LocalSocket", 10)
+		if LocalSocket:
+			LocalSocket.Connect()
+			Parent.AddCooldown(ScriptName, "LocalSocket", 10)
 		if ScriptSettings.JTVToken and ScriptSettings.JTVClientID and ScriptSettings.StreamerName:
 			TwitchPubSubAPI.Connect()
 			Parent.AddCooldown(ScriptName, "TwitchPubSubPong", 10)
