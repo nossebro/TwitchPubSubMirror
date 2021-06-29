@@ -4,22 +4,19 @@
 		"type": "checkbox",
 		"value": false,
 		"label": "Subscribe to and send Twitch Bits events",
-		"tooltip": "",
-		"group": "Mirror Events"
+		"tooltip": ""
 	},
 	"TwitchSub": {
 		"type": "checkbox",
 		"value": false,
 		"label": "Subscribe to and send Twitch Subscription events",
-		"tooltip": "",
-		"group": "Mirror Events"
+		"tooltip": ""
 	},
 	"TwitchChannelPoints": {
 		"type": "checkbox",
 		"value": true,
 		"label": "Subscribe to and send Twitch Channel Point Rewards events",
-		"tooltip": "",
-		"group": "Mirror Events"
+		"tooltip": ""
 	},
 	"StreamerName": {
 		"type": "textbox",
@@ -42,10 +39,52 @@
 		"tooltip": "The Twitch Oauth Token that can be generated at https://twitchapps.com/tokengen. For correct scopes, see https://dev.twitch.tv/docs/authentication#scopes",
 		"group": "Twitch API"
 	},
+	"SLCBBroadcast": {
+		"type": "checkbox",
+		"value": true,
+		"label": "Broadcast events via Streamlabs Chatbot",
+		"tooltip": "",
+		"group": "Streamlabs Chatbot"
+	},
+	"LocalWebsocketAPIKey": {
+		"type": "textbox",
+		"value": "",
+		"label": "API Key",
+		"tooltip": "Local websocket api key",
+		"group": "Local Websocket"
+	},
+	"LocalWebsocketPort": {
+		"type": "numberbox",
+		"value": 8765,
+		"label": "Port",
+		"tooltip": "Local websocket port",
+		"group": "Local Websocket"
+	},
+	"LocalWebsocket": {
+		"type": "checkbox",
+		"value": false,
+		"label": "Broadcast events on local websocket",
+		"tooltip": "",
+		"group": "Local Websocket"
+	},
+	"SLCBCompat": {
+		"type": "checkbox",
+		"value": true,
+		"label": "Send Streamlabs Chatbot compatible events",
+		"tooltip": "",
+		"group": "Local Websocket"
+	},
+	"MirrorAll": {
+		"type": "checkbox",
+		"value": false,
+		"label": "Mirror all Twitch PubSub events",
+		"tooltip": "Send original events as TWITCHPUBSUB events",
+		"group": "Local Websocket"
+	},
 	"DebugMode": {
 		"type": "checkbox",
 		"value": false,
-		"label": "Debug Mode",
-		"tooltip": "Enables Debug Mode"
+		"label": "Debug mode",
+		"tooltip": "Enables debug Mode"
 	}
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0 - Backport
+
+* Backport from WebsocketServer version
+
 ## 0.0.2 - Bugfixes
 
 * Bugfixes and updates
