@@ -1,0 +1,53 @@
+{
+    "type": "MESSAGE",
+    "data": {
+        "message": {
+            "type": "reward-redeemed",
+            "data": {
+                "timestamp": "",
+                "redemption": {
+                    "id": "",
+                    "user": {
+                        "id": "",
+                        "login": "",
+                        "display_name": ""
+                    },
+                    "channel_id": "172741635",
+                    "redeemed_at": "",
+                    "reward": {
+                        "id": "",
+                        "channel_id": "172741635",
+                        "title": "",
+                        "prompt": "",
+                        "cost": 0,
+                        "is_user_input_required": false,
+                        "is_sub_only": false,
+                        "image": {
+                            "url_1x": "https://static-cdn.jtvnw.net/custom-reward-images/172741635/bf8fda2b-bee5-439e-a30f-05b2fa19d29b/05eaae7f-0b5e-4369-a6ac-034108b3024e/custom-1.png",
+                            "url_2x": "https://static-cdn.jtvnw.net/custom-reward-images/172741635/bf8fda2b-bee5-439e-a30f-05b2fa19d29b/05eaae7f-0b5e-4369-a6ac-034108b3024e/custom-2.png",
+                            "url_4x": "https://static-cdn.jtvnw.net/custom-reward-images/172741635/bf8fda2b-bee5-439e-a30f-05b2fa19d29b/05eaae7f-0b5e-4369-a6ac-034108b3024e/custom-4.png"
+                        },
+                        "default_image": {
+                            "url_1x": "https://static-cdn.jtvnw.net/custom-reward-images/default-1.png",
+                            "url_2x": "https://static-cdn.jtvnw.net/custom-reward-images/default-2.png",
+                            "url_4x": "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png"
+                        },
+                        "background_color": "#FFFFFF",
+                        "is_enabled": true,
+                        "is_paused": false,
+                        "is_in_stock": true,
+                        "max_per_stream": {
+                            "is_enabled": false,
+                            "max_per_stream": 0
+                        },
+                        "should_redemptions_skip_request_queue": false,
+                        "template_id": null,
+                        "updated_for_indicator_at": ""
+                    },
+                    "status": "UNFULFILLED"
+                }
+            }
+        },
+        "topic": "channel-points-channel-v1.172741635"
+    }
+}

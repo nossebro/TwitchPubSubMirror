@@ -1,0 +1,23 @@
+{
+    "type": "MESSAGE", 
+    "data": {
+        "message": {
+            "time": "", 
+            "channel_id": "172741635", 
+            "multi_month_duration": 0, 
+            "benefit_end_month": 0, 
+            "context": "", 
+            "channel_name": "specsnstats", 
+            "sub_plan_name": "Channel Subscription (specsnstats)", 
+            "months": 0, 
+            "cumulative_months": 0, 
+            "sub_plan": "", 
+            "sub_message": {
+                "message": "", 
+                "emotes": null
+            }, 
+            "is_gift": false
+        }, 
+        "topic": "channel-subscribe-events-v1.172741635"
+    }
+}
