@@ -12,11 +12,12 @@ import os
 import sys
 import codecs
 import json
-import uuid
+from uuid import uuid1, uuid4
+import random
+from datetime import tzinfo, timedelta, datetime
 clr.AddReference("websocket-sharp.dll")
 from WebSocketSharp import WebSocket
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from CommonEventTemplates import TwitchBits, TwitchSubscriptions, TwitchChannelPoints
+from EventTemplates import TwitchBits, TwitchChannelPoints, TwitchSubscriptions
 
 #---------------------------------------
 #   [Required] Script Information
@@ -24,7 +25,7 @@ from CommonEventTemplates import TwitchBits, TwitchSubscriptions, TwitchChannelP
 ScriptName = 'TwitchPubSubMirror'
 Website = 'https://github.com/nossebro/TwitchPubSubMirror'
 Creator = 'nossebro'
-Version = '0.1.1'
+Version = '0.2.0'
 Description = 'Mirrors events from Twitch PubSub socket, and sends them to a local SLCB-compatible websocket'
 
 #---------------------------------------
@@ -38,6 +39,22 @@ TwitchPubSubAPIPong = True
 Logger = None
 SettingsFile = os.path.join(os.path.dirname(__file__), "Settings.json")
 UIConfigFile = os.path.join(os.path.dirname(__file__), "UI_Config.json")
+CheerMotes = [ "Cheer", "DoodleCheer", "BibleThump", "cheerwhal", "Corgo", "uni", "ShowLove", "Party", "SeemsGood", "Pride", "Kappa", "FrankerZ", "HeyGuys", "DansGame", "EleGiggle", "TriHard", "Kreygasm", "4Head", "SwiftRage", "NotLikeThis", "FailFish", "VoHiYo", "PJSalt", "MrDestructoid", "bday", "RIPCheer", "Shamrock", "BitBoss", "Streamlabs", "Muxy", "HolidayCheer" ]
+RandomUser = [
+	{
+		"user_id": "163324196",
+		"user_name": "nossebro",
+		"display_name": "nossebro"
+	}
+]
+RandomRecipient = [
+	{
+		"recipient_id": "163324196",
+		"recipient_user_name": "nossebro",
+		"recipient_display_name": "nossebro"
+	}
+]
+random.seed()
 
 #---------------------------------------
 #   Script Classes
@@ -125,7 +142,7 @@ def GetLogger():
 	return log
 
 def Nonce():
-	nonce = uuid.uuid1()
+	nonce = uuid1()
 	oauth_nonce = nonce.hex
 	return oauth_nonce
 
@@ -252,7 +269,8 @@ def ScriptToggled(state):
 		if not Logger:
 			Init()
 		global ScriptSettings
-		if LocalSocket:
+		if ScriptSettings.LocalWebsocket and ScriptSettings.LocalWebsocketPort:
+			global LocalSocket
 			LocalSocket.Connect()
 			Parent.AddCooldown(ScriptName, "LocalSocket", 10)
 		if ScriptSettings.JTVToken and ScriptSettings.JTVClientID and ScriptSettings.StreamerName:
@@ -455,6 +473,7 @@ def TwitchPubSubAPIEvent(ws, data):
 		global TwitchPubSubAPIPong
 		TwitchPubSubAPIPong = True
 	elif event["type"] == "MESSAGE":
+		is_test = False
 		topic = re.match(r"(?P<topic>[\w-]+)\.[\d]+", event["data"]["topic"])
 		if isinstance(event["data"]["message"], str):
 			event["data"]["message"] = json.loads(event["data"]["message"])
@@ -462,6 +481,8 @@ def TwitchPubSubAPIEvent(ws, data):
 		if ScriptSettings.MirrorAll:
 			global LocalSocket
 			LocalSocket.Send(json.dumps({ "event": "TWITCHPUBSUB", "data": event["data"] }))
+		if event["data"].get("is_test", None):
+			is_test = True
 		if topic.group("topic") == "channel-bits-events-v2" and ScriptSettings.TwitchBits:
 			is_new_badge_tier = False
 			new_badge = None
@@ -471,9 +492,11 @@ def TwitchPubSubAPIEvent(ws, data):
 			if "badge_entitlement" in message and message["badge_entitlement"] and "new_version" in message["badge_entitlement"] and "previous_version" in message["badge_entitlement"] and message["badge_entitlement"]["new_version"] > 0:
 				is_new_badge_tier = True
 				new_badge = message["badge_entitlement"]["new_version"]
-			SendEvent(TwitchBits(message.get("user_id"), message.get("user_name"), message.get("display_name"), message.get("bits_used", 0), message.get("total_bits_used", 0), message.get("chat_message"), message.get("is_anonymous", False), is_new_badge_tier=is_new_badge_tier, badge_tier=new_badge))
+			SendEvent(TwitchBits(message.get("user_id"), message.get("user_name"), message.get("display_name"), message.get("bits_used", 0), message.get("total_bits_used", 0), message.get("chat_message"), message.get("is_anonymous", False), is_new_badge_tier=is_new_badge_tier, badge_tier=new_badge, is_test=is_test, is_repeat=None))
 		elif topic.group("topic") == "channel-subscribe-events-v1" and ScriptSettings.TwitchSub:
 			message = event["data"]["message"]
+			if is_test:
+				message["is_test"] = True
 			if "sub_message" in message and "message" in message["sub_message"]:
 				message["message"] = message["sub_message"]["message"]
 			if "context" in message:
@@ -482,4 +505,147 @@ def TwitchPubSubAPIEvent(ws, data):
 			SendEvent(TwitchSubscriptions(**args))
 		elif topic.group("topic") == "channel-points-channel-v1" and ScriptSettings.TwitchChannelPoints:
 			message = event["data"]["message"]["data"]["redemption"]
-			SendEvent(TwitchChannelPoints(message["user"]["id"], message["user"]["login"], message["user"]["display_name"], message["reward"]["id"], message["reward"]["cost"], message["reward"]["title"], prompt=message["reward"]["prompt"], is_test=False, is_repeat=None))
+			SendEvent(TwitchChannelPoints(message["user"]["id"], message["user"]["login"], message["user"]["display_name"], message["reward"]["id"], message["reward"]["cost"], message["reward"]["title"], prompt=message["reward"]["prompt"], is_test=is_test, is_repeat=None))
+
+#---------------------------------------
+#   Simulated Events
+#---------------------------------------
+class UTC(tzinfo):
+	def utcoffset(self, dt):
+		return timedelta(0)
+	def tzname(self, dt):
+		return "UTC"
+	def dst(self, dt):
+		return timedelta(0)
+
+class Object(object):
+	pass
+
+def timestamp():
+	utc = UTC()
+	return datetime.now(utc).astimezone(utc).isoformat('T').replace('000+00:00', 'Z')
+
+def CheerMessage(bits):
+
+	def AddCheer(bits, split):
+		global CheerMotes
+		retvalue = list()
+		for i in range(bits / split):
+			retvalue.append("{0}{1}".format(random.choice(CheerMotes), split))
+		return retvalue
+
+	cheer = list()
+	for i in (10000, 5000, 1000, 500, 100, 50, 10, 5, 1):
+		cheer += AddCheer(bits, i)
+		bits = bits % i
+	return " ".join(cheer)
+
+def SendTwitchBit():
+	with open(os.path.join(os.path.dirname(__file__), "examples", "channel-bits-events-v2.json"), "r") as fh:
+		message = json.load(fh)
+	message["data"]["is_test"] = True
+	bits = Parent.GetRandom(1, 5000)
+	total_bits = Parent.GetRandom(bits, 10000)
+	data = {
+		"time": timestamp(),
+		"bits_used": bits,
+		"total_bits_used": total_bits,
+		"chat_message": "{0} I love you stimmer!".format(CheerMessage(bits))
+	}
+	if 5000 <= total_bits < 10000:
+		badge = {
+			"badge_entitlement": {
+				"new_version": 5000,
+				"previous_version": 1000
+			}
+		}
+		data.update(badge)
+	data.update(random.choice(RandomUser))
+	message["data"]["message"]["data"].update(data)
+	message["data"]["message"]["data"]["is_anonymous"] = False
+	message["data"]["message"]["message_id"] = str(uuid4())
+	obj = Object()
+	obj.Data = json.dumps(message, indent=4)
+	TwitchPubSubAPIEvent(None, obj)
+
+def SendTwitchChannelPoints():
+	with open(os.path.join(os.path.dirname(__file__), "examples", "channel-points-channel-v1.json"), "r") as fh:
+		message = json.load(fh)
+	message["data"]["is_test"] = True
+	user = random.choice(RandomUser)
+	user["id"] = user.pop("user_id")
+	user["login"] = user.pop("user_name")
+	reward = {
+		"id": str(uuid4()),
+		"title": "Show love to stimmer!",
+		"prompt": "Do you love stimmer?",
+		"cost": Parent.GetRandom(200, 1000) / 100 * 100,
+		"updated_for_indicator_at": timestamp()
+	}
+	redemption = {
+		"id": str(uuid4()),
+		"user": user,
+		"redeemed_at": timestamp()
+	}
+	message["data"]["message"]["data"]["redemption"].update(redemption)
+	message["data"]["message"]["data"]["redemption"]["reward"].update(reward)
+	message["data"]["message"]["data"]["timestamp"] = timestamp()
+	obj = Object()
+	obj.Data = json.dumps(message, indent=4)
+	TwitchPubSubAPIEvent(None, obj)
+
+def SendTwitchSub():
+	with open(os.path.join(os.path.dirname(__file__), "examples", "channel-subscribe-events-v1.json"), "r") as fh:
+		message = json.load(fh)
+	message["data"]["is_test"] = True
+	months = Parent.GetRandom(1, 36)
+	streak = Parent.GetRandom(1, months)
+	data = {
+		"time": timestamp(),
+		"context": random.choice([ "sub", "resub" ]),
+		"sub_plan": random.choice([ "1000", "2000", "3000", "Prime"]),
+		"cumulative_months": months,
+		"streak_months": streak,
+		"multi_month_duration": random.choice([ 1, 3, 6, 12 ]),
+	}
+	submessage = {
+		"message": "I love you stimmer!",
+		"emotes": None
+	}
+	data.update(random.choice(RandomUser))
+	message["data"]["message"].update(data)
+	message["data"]["message"]["sub_message"].update(submessage)
+	obj = Object()
+	obj.Data = json.dumps(message, indent=4)
+	TwitchPubSubAPIEvent(None, obj)
+
+def SendTwitchGiftSub():
+	with open(os.path.join(os.path.dirname(__file__), "examples", "channel-subscribe-events-v1.json"), "r") as fh:
+		message = json.load(fh)
+	message["data"]["is_test"] = True
+	amount = random.choice([ 1, 1, 1, 1, 5, 10, Parent.GetRandom(1, 10) ])
+	user = random.choice(RandomUser)
+	plan = random.choice([ "1000", "2000", "3000" ])
+	for i in range(amount):
+		months = Parent.GetRandom(1, 36)
+		streak = Parent.GetRandom(1, months)
+		recipient = random.choice(RandomRecipient)
+		data = {
+			"context": random.choice([ "giftsub", "giftresub" ]),
+			"sub_plan": plan,
+			"cumulative_months": months,
+			"streak_months": streak,
+			"is_gift": True,
+			"multi_month_duration": random.choice([ 1, 3, 6, 12 ])
+		}
+		submessage = {
+			"message": "I love you stimmer!",
+			"emotes": None
+		}
+		data.update(user)
+		data.update(recipient)
+		message["data"]["message"].update(data)
+		message["data"]["message"]["sub_message"].update(submessage)
+		obj = Object()
+		obj.Data = json.dumps(message, indent=4)
+		TwitchPubSubAPIEvent(None, obj)

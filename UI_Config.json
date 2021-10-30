@@ -42,7 +42,7 @@
 	"SLCBBroadcast": {
 		"type": "checkbox",
 		"value": true,
-		"label": "Broadcast events via Streamlabs Chatbot",
+		"label": "Broadcast missing events via Streamlabs Chatbot",
 		"tooltip": "",
 		"group": "Streamlabs Chatbot"
 	},
@@ -63,7 +63,7 @@
 	"LocalWebsocket": {
 		"type": "checkbox",
 		"value": false,
-		"label": "Broadcast events on local websocket",
+		"label": "Broadcast missing events on local websocket",
 		"tooltip": "",
 		"group": "Local Websocket"
 	},
@@ -76,7 +76,7 @@
 	},
 	"MirrorAll": {
 		"type": "checkbox",
-		"value": false,
+		"value": true,
 		"label": "Mirror all Twitch PubSub events",
 		"tooltip": "Send original events as TWITCHPUBSUB events",
 		"group": "Local Websocket"
@@ -86,5 +86,37 @@
 		"value": false,
 		"label": "Debug mode",
 		"tooltip": "Enables debug Mode"
+	},
+	"SendTwitchBit": {
+		"type": "button",
+		"label": "Twitch Bit",
+		"tooltip": "Sends a test event",
+		"wsevent": "BUTTON_BIT",
+		"function": "SendTwitchBit",
+		"group": "Send Test Events"
+	},
+	"SendTwitchChannelPoints": {
+		"type": "button",
+		"label": "Twitch Channel Points",
+		"tooltip": "Sends a test event",
+		"wsevent": "BUTTON_CHANNEL_POINTS",
+		"function": "SendTwitchChannelPoints",
+		"group": "Send Test Events"
+	},
+	"SendTwitchSub": {
+		"type": "button",
+		"label": "Twitch Subscription",
+		"tooltip": "Sends a test event",
+		"wsevent": "BUTTON_SUB",
+		"function": "SendTwitchSub",
+		"group": "Send Test Events"
+	},
+	"SendTwitchGiftSub": {
+		"type": "button",
+		"label": "Twitch Gift Subscription",
+		"tooltip": "Sends a test event",
+		"wsevent": "BUTTON_GIFTSUB",
+		"function": "SendTwitchGiftSub",
+		"group": "Send Test Events"
 	}
 }

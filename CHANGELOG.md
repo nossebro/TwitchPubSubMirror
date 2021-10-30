@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 - Refactor
+
+* Add test events sending
+* Remove sub modules
+* Update documentation
+
 ## 0.1.1 - Bugfixes
 
 * Fix LocalSocket connect issues
