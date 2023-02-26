@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 - TLS issues
+
+* Force TLS 1.2
+
 ## 0.2.0 - Refactor
 
 * Add test events sending

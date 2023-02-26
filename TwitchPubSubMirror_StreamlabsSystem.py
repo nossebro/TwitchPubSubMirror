@@ -18,6 +18,7 @@ from datetime import tzinfo, timedelta, datetime
 clr.AddReference("websocket-sharp.dll")
 from WebSocketSharp import WebSocket
 from EventTemplates import TwitchBits, TwitchChannelPoints, TwitchSubscriptions
+from System import Security
 
 #---------------------------------------
 #   [Required] Script Information
@@ -25,7 +26,7 @@ from EventTemplates import TwitchBits, TwitchChannelPoints, TwitchSubscriptions
 ScriptName = 'TwitchPubSubMirror'
 Website = 'https://github.com/nossebro/TwitchPubSubMirror'
 Creator = 'nossebro'
-Version = '0.2.0'
+Version = '0.2.1'
 Description = 'Mirrors events from Twitch PubSub socket, and sends them to a local SLCB-compatible websocket'
 
 #---------------------------------------
@@ -222,6 +223,11 @@ def Init():
 
 	global TwitchPubSubAPI
 	TwitchPubSubAPI = WebSocket("wss://pubsub-edge.twitch.tv")
+#	TwitchPubSubAPI.Log.Level = LogLevel.Debug
+#	TwitchPubSubAPI.Log.File = os.path.join(os.path.dirname(__file__), "pubsub.log")
+#	Logger.debug(TwitchPubSubAPI.SslConfiguration.EnabledSslProtocols)
+	TwitchPubSubAPI.SslConfiguration.EnabledSslProtocols = Security.Authentication.SslProtocols.Tls12
+#	Logger.debug(TwitchPubSubAPI.SslConfiguration.EnabledSslProtocols)
 	TwitchPubSubAPI.OnOpen += TwitchPubSubAPIConnected
 	TwitchPubSubAPI.OnClose += TwitchPubSubAPIDisconnected
 	TwitchPubSubAPI.OnMessage += TwitchPubSubAPIEvent
